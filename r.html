@@ -1,0 +1,77 @@
+﻿<!doctype html>
+<html>
+<head>
+  <title>/r/</title>
+  <style>
+
+    body {
+      cursor: default;
+      font-family: Calibri;
+      font-size: 140%;
+    }
+
+    h3, ol {
+      margin: 0;
+      padding-top: 0;
+    }
+
+    li {
+      color: #ddd;
+      padding: 0.25em 0.5em;
+    }
+
+      li:nth-of-type(odd) {
+        background-color: #f1f1f1;
+      }
+
+    :link {
+      color: #222;
+      text-decoration: none;
+    }
+
+    :visited {
+      color: #aaa;
+    }
+
+    :link:hover {
+      text-decoration: underline;
+    }
+
+  </style>
+</head>
+<body>
+  <script>
+
+    function add(r) {
+      var div = create('div')
+      div.innerHTML = '<h3>' + r + '</h3>'
+      window.add[r] = function (o) { append(o, div) }
+      create('script').src = '//reddit.com/r/' + r + '/new.json?jsonp=add.' + r
+    }
+
+    function append(o, to) {
+      create.call(to, 'ol').innerHTML = o.data.children.map(function (i) {
+        return (
+        '<li>' +
+          '<a href="' + i.data.url + '" id="' + i.data.id + '">' +
+            i.data.title +
+          '</a>' +
+        '</li>'
+        )
+      }).join('\n')
+    }
+
+    function create(tag) {
+      var to = (this == window) ? document.body : this
+      return to.appendChild(document.createElement(tag))
+    }
+
+    add('xboxone')
+    add('firetv')
+    add('firetvstick')
+    add('destiny')
+    add('titanfall')
+
+  </script>
+</body>
+</html> 

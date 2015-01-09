@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+  <title>/r/</title>
+  <style>
+    body {
+      margin: 0;
+    }
+    a,img {
+      display: block;
+      float: left;
+      height: 50vh;
+      width: 49vw;
+      object-fit: cover; /* chrome-only */
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+
+    ondata = function (data) {
+
+      data.data.children.forEach(function (post) {
+        var nsfw = post.data.over_18
+        var url = post.data.url
+        if (/\.(gifv?|jpg)$/.test(url)) {
+          create('img').src = url.replace(/v$/, '')
+        }
+        else {
+          create('a', '', url).href = url
+        }
+      })
+
+      //create('pre').textContent = JSON.stringify(data, 0, '  ')
+
+    }
+
+    function create(tag, className, innerHTML) {
+      var el = document.createElement(tag)
+      if (className) el.className = className
+      if (innerHTML) el.innerHTML = innerHTML 
+      return document.body.appendChild(el)
+    }
+
+    var r = location.search.substr(1)
+    if (r) create('script').src = 'http://www.reddit.com/r/' + r + '/top.json?sort=top&t=week&jsonp=ondata'
+
+  </script>
+
+</body>
+</html>
