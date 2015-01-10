@@ -1,0 +1,114 @@
+<!doctype html>
+<title>/r/</title>
+<script>
+
+  function add(r) {
+
+    var div = create('div', '<b>' + r + '</b>')
+    var src = '//reddit.com/r/' + r + '/new.json?jsonp=add.' + r + '&count=25&before='
+    var ol = create.call(div, 'ol')
+    var before = ''
+
+    var loop = function () {
+      updateTimes()
+      create('script').src = src + before
+    }
+
+    div.firstChild.onclick = loop
+
+    add[r] = function (data) {
+
+      var array = data.data.children
+      var previousLI = ol.firstChild
+
+      array.forEach(function (i) {
+        after = i.data.name
+        var li = create.call(ol, 'li',
+          '<a href="' + i.data.url + '" id="' + after + '">' +
+          i.data.title +
+          ' <span data-utc="' + i.data.created_utc + '">' + timeSince(i.data.created_utc) + '</span>' +
+          '</a> '
+        )
+        if (previousLI) {
+          ol.insertBefore(li, previousLI)
+        }
+      })
+
+      if (array.length) {
+        before = array.shift().data.name
+      }
+
+    }
+
+    loop()
+
+  }
+
+  function create(tag, innerHTML) {
+    var to = (this == window) ? document.body : this
+    var el = document.createElement(tag)
+    if (innerHTML) el.innerHTML = innerHTML
+    return to.appendChild(el)
+  }
+
+  function timeSince(date) {
+    // http://stackoverflow.com/a/3177838/477958
+    var seconds = Math.floor((new Date().getTime() / 1000) - date)
+
+    var interval = Math.floor(seconds / 31536000)
+    if (interval >= 1) return interval + 'Y'
+
+    interval = Math.floor(seconds / 2592000)
+    if (interval >= 1) return interval + 'M'
+
+    interval = Math.floor(seconds / 86400)
+    if (interval >= 1) return interval + 'd'
+
+    interval = Math.floor(seconds / 3600)
+    if (interval >= 1) return interval + 'h'
+
+    interval = Math.floor(seconds / 60)
+    if (interval >= 1) return interval + 'm'
+
+    return Math.floor(seconds) + 's'
+  }
+
+  function updateTimes() {
+    Array.prototype.forEach.call(
+      document.querySelectorAll('[data-utc]'),
+      function (el) {
+        el.textContent = timeSince(el.dataset.utc)
+      }
+    )
+  }
+  
+  onload = function () {
+    add('xboxone')
+    add('firetv')
+  }
+  
+</script>
+<style>
+
+  body {
+    cursor: default;
+    font-family: helvetica;
+  }
+
+  li {
+    padding: 0.25em;
+  }
+
+  span {
+    color: #555;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  a:visited, a:visited span {
+    color: silver;
+  }
+
+</style>
